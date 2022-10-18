@@ -4,7 +4,7 @@
 
 The legacy fingerprint authentication using Fingerprint Manager with the new AndroidX MasterKey.
 <div style="text-align:center; width: 100%;">
-  <img src="screenshot.png" width="300" height="auto" align="center"> 
+  <img src="screenshot.jpg" width="300" height="auto" align="center"> 
 </div>
 
 ## Usage
