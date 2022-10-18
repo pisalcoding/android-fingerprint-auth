@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/fingerprint_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:textColor="#333333"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:text="@string/title_one_touch_id"
+            android:textAlignment="center"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/fingerprint_icon"
+            android:layout_width="@dimen/fingerprint_icon_size"
+            android:layout_height="@dimen/fingerprint_icon_size"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="32dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_baseline_fingerprint_24"
+            android:tint="#ff008577"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/fingerprint_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="24dp"
+            android:textSize="14sp"
+            android:gravity="center_horizontal"
+            android:accessibilityLiveRegion="polite"
+            android:text="@string/fingerprint_dialog_touch_sensor"
+            android:textColor="?android:attr/textColorSecondary" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_negative"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:textSize="14sp"
+            android:text="@string/btn_use_pin"
+            android:textColor="#FF018786"
+            android:background="?selectableItemBackground"
+            android:layout_marginBottom="16dp"/>
+    </LinearLayout>
+</ScrollView>

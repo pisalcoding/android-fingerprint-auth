@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".MainActivity"
+    android:gravity="center">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_read"
+        android:layout_width="200dp"
+        android:layout_height="56dp"
+        android:layout_gravity="start"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginVertical="16dp"
+        app:backgroundTint="@color/black"
+        android:text="Read"
+        android:drawableLeft="@drawable/ic_outline_remove_red_eye_24"
+        android:gravity="center"
+        android:drawableTint="@color/white"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/txl_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="16dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Username"
+            android:inputType="textPersonName"
+            android:imeOptions="actionNext"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/txl_pin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="16dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="PIN"
+            android:inputType="number"
+            android:imeOptions="actionDone"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_save"
+        android:layout_width="200dp"
+        android:layout_height="56dp"
+        android:layout_gravity="end"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginVertical="16dp"
+        app:backgroundTint="@color/teal_700"
+        android:text="Save"
+        android:drawableLeft="@drawable/ic_outline_save_24"
+        android:gravity="center"
+        android:drawableTint="@color/white"/>
+</LinearLayout>

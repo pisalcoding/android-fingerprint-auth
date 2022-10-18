@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fingerprint_dialog_touch_sensor">Touch the fingerprint sensor</string>
+    <string name="msg_no_screen_lock_detected">Please setup device\'s screen lock!</string>
+    <string name="title_one_touch_id">Fingerprint Authentication</string>
+    <string name="btn_use_pin">Cancel</string>
+</resources>
