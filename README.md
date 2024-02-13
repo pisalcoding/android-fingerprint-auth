@@ -1,6 +1,6 @@
-
-
 # Android Fingerprint Auth
+
+[![](https://jitpack.io/v/pisalcoding/android-fingerprint-auth.svg)](https://jitpack.io/#pisalcoding/android-fingerprint-auth)
 
 The legacy fingerprint authentication using Fingerprint Manager with the new AndroidX MasterKey.
 <div style="text-align:center; width: 100%;">
