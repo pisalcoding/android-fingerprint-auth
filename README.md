@@ -20,7 +20,7 @@ repositories {
 > Step 2: Add this your app build.gradle
 ```groovy
 dependencies {
-    implementation 'com.github.pisalcoding:fingerprint-auth:1.0.0'
+    implementation 'com.github.pisalcoding:android-fingerprint-auth:Tag'
 }
 ```
 
