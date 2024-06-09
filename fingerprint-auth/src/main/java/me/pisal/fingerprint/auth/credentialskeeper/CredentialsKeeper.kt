@@ -46,6 +46,10 @@ class CredentialsKeeper(private val context: Context) {
                 setUserAuthenticationRequired(true)
                 setKeySize(256)
 
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    setInvalidatedByBiometricEnrollment(FingerprintAuth.invalidateByFingerprintEnrollment)
+                }
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     setUserAuthenticationParameters(
                         FingerprintAuth.validityDuration,

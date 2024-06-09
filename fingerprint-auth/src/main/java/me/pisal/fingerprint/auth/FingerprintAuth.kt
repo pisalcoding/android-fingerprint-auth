@@ -5,13 +5,19 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.security.keystore.KeyGenParameterSpec
-import android.security.keystore.KeyProperties.*
+import android.security.keystore.KeyProperties.BLOCK_MODE_GCM
+import android.security.keystore.KeyProperties.ENCRYPTION_PADDING_NONE
+import android.security.keystore.KeyProperties.KEY_ALGORITHM_AES
+import android.security.keystore.KeyProperties.PURPOSE_DECRYPT
+import android.security.keystore.KeyProperties.PURPOSE_ENCRYPT
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.core.hardware.fingerprint.FingerprintManagerCompat
-import androidx.core.hardware.fingerprint.FingerprintManagerCompat.*
+import androidx.core.hardware.fingerprint.FingerprintManagerCompat.AuthenticationCallback
+import androidx.core.hardware.fingerprint.FingerprintManagerCompat.AuthenticationResult
+import androidx.core.hardware.fingerprint.FingerprintManagerCompat.CryptoObject
 import androidx.core.os.CancellationSignal
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -37,7 +43,6 @@ class FingerprintAuth private constructor(private val mHostActivity: FragmentAct
      */
     fun withDialogView(fragment: BaseFingerprintDialogFragment): FingerprintAuth {
         mDialogFragment = fragment
-        mFingerprintManager = FingerprintManagerCompat.from(mHostActivity)
         return this
     }
 
@@ -58,6 +63,24 @@ class FingerprintAuth private constructor(private val mHostActivity: FragmentAct
     }
 
     /**
+     * Sets whether this key should be invalidated on biometric enrollment.
+     *
+     * <p>By default, {@code invalidateKey} is {@code true}, so keys that are valid for
+     * biometric authentication only are <em>irreversibly invalidated</em> when a new
+     * biometric is enrolled, or when all existing biometrics are deleted.  That may be
+     * changed by calling this method with {@code invalidateKey} set to {@code false}.
+     *
+     * <p>Invalidating keys on enrollment of a new biometric or unenrollment of all biometrics
+     * improves security by ensuring that an unauthorized person who obtains the password can't
+     * gain the use of biometric-authenticated keys by enrolling their own biometric.  However,
+     * invalidating keys makes key-dependent operations impossible, requiring some fallback
+     * procedure to authenticate the user and set up a new key.
+     */
+    fun invalidateByFingerprintEnrollment(invalidateKey: Boolean) {
+        invalidateByFingerprintEnrollment = invalidateKey
+    }
+
+    /**
      * After fingerprint scan is successful, you can access [CredentialsKeeper] safely
      * and without SecurityExceptions
      */
@@ -66,23 +89,45 @@ class FingerprintAuth private constructor(private val mHostActivity: FragmentAct
         return this
     }
 
+    /**
+     * Error callback when the Fingerprint authentication fails.
+     */
     fun doOnFailure(block: BiometricFailureBlock): FingerprintAuth {
         mFailureBlock = block
         return this
     }
 
+    /**
+     * Return whether the keyguard is secured by a PIN, pattern or password or a SIM card
+     * is currently locked.
+     * @return {@code true} if a PIN, pattern or password is set or a SIM card is locked.
+     */
     fun deviceHasSecureLock(): Boolean {
         return isKeyguardSecure(mHostActivity)
     }
 
+    /**
+     * Determine if fingerprint hardware is present and functional.
+     *
+     * @return true if hardware is present and functional, false otherwise.
+     */
     fun deviceHasFingerprintSensor(): Boolean {
         return mFingerprintManager.isHardwareDetected
     }
 
+    /**
+     * Determine if there is at least one fingerprint enrolled.
+     *
+     * @return true if at least one fingerprint is enrolled, false otherwise
+     */
     fun deviceHasFingerprintsEnrolled(): Boolean {
         return mFingerprintManager.hasEnrolledFingerprints()
     }
 
+    /**
+     * @return true if the device has met all conditions to start using Fingerprint authentication.
+     * { 1. deviceHasSecureLock(), 2. deviceHasFingerprintSensor(), 3. deviceHasFingerprintsEnrolled }
+     */
     fun isDeviceEligible(): Boolean {
         return deviceHasSecureLock() &&
                 deviceHasFingerprintSensor() &&
@@ -234,10 +279,13 @@ class FingerprintAuth private constructor(private val mHostActivity: FragmentAct
         private const val DUMMY_KEY_ALIAS = "pZZA27l28r97"
 
         fun from(hostActivity: FragmentActivity): FingerprintAuth {
-            return FingerprintAuth(hostActivity)
+            return FingerprintAuth(hostActivity).apply {
+                this.mFingerprintManager = FingerprintManagerCompat.from(mHostActivity)
+            }
         }
 
         var validityDuration: Int = DEFAULT_VALIDITY_DURATION
+        var invalidateByFingerprintEnrollment: Boolean = true
         var aesKeySize: Int = DEFAULT_AES_KEY_SIZE
     }
 }
