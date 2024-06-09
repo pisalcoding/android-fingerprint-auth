@@ -4,4 +4,5 @@
     <string name="msg_no_screen_lock_detected">Please setup device\'s screen lock!</string>
     <string name="title_one_touch_id">Fingerprint Authentication</string>
     <string name="btn_use_pin">Cancel</string>
+    <string name="msg_fm_not_initialized">Fingerprint manager not initialized.</string>
 </resources>
