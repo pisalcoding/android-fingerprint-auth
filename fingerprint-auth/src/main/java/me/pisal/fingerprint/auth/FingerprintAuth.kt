@@ -28,6 +28,7 @@ typealias BiometricFailureBlock = (message: String) -> Unit
 class FingerprintAuth private constructor(private val mHostActivity: FragmentActivity) {
 
     private lateinit var mDialogFragment: BaseFingerprintDialogFragment
+    private lateinit var mFingerprintManager: FingerprintManagerCompat
     private var mSuccessBlock: BiometricSuccessBlock? = null
     private var mFailureBlock: BiometricFailureBlock? = null
 
@@ -36,6 +37,7 @@ class FingerprintAuth private constructor(private val mHostActivity: FragmentAct
      */
     fun withDialogView(fragment: BaseFingerprintDialogFragment): FingerprintAuth {
         mDialogFragment = fragment
+        mFingerprintManager = FingerprintManagerCompat.from(mHostActivity)
         return this
     }
 
@@ -69,12 +71,29 @@ class FingerprintAuth private constructor(private val mHostActivity: FragmentAct
         return this
     }
 
+    fun deviceHasSecureLock(): Boolean {
+        return isKeyguardSecure(mHostActivity)
+    }
+
+    fun deviceHasFingerprintSensor(): Boolean {
+        return mFingerprintManager.isHardwareDetected
+    }
+
+    fun deviceHasFingerprintsEnrolled(): Boolean {
+        return mFingerprintManager.hasEnrolledFingerprints()
+    }
+
+    fun isDeviceEligible(): Boolean {
+        return deviceHasSecureLock() &&
+                deviceHasFingerprintSensor() &&
+                deviceHasFingerprintsEnrolled()
+    }
+
     /**
      * Show the fingerprint dialog and start listening for sensor input
      */
     fun authenticate() {
-        val manager = FingerprintManagerCompat.from(mHostActivity)
-        validate(manager)
+        validate()
 
         mHostActivity.supportFragmentManager
             .findFragmentByTag(BaseFingerprintDialogFragment.TAG)
@@ -87,7 +106,7 @@ class FingerprintAuth private constructor(private val mHostActivity: FragmentAct
         )
 
         // Warm up the fingerprint hardware and starts scanning for a fingerprint
-        manager.authenticate(
+        mFingerprintManager.authenticate(
             cryptoObject(),
             FINGERPRINT_FLAGS,
             mDialogFragment.cancellationSignal,
@@ -120,7 +139,7 @@ class FingerprintAuth private constructor(private val mHostActivity: FragmentAct
     private val mCredentialsKeeper = CredentialsKeeper(mHostActivity.applicationContext)
 
     private val mAuthCallback: AuthenticationCallback =
-        object : FingerprintManagerCompat.AuthenticationCallback() {
+        object : AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: AuthenticationResult?) {
                 super.onAuthenticationSucceeded(result)
                 try {
@@ -151,17 +170,20 @@ class FingerprintAuth private constructor(private val mHostActivity: FragmentAct
             }
         }
 
-    private fun validate(fpManager: FingerprintManagerCompat) {
-        if (!isKeyguardSecure(mHostActivity)) {
-            throw IllegalStateException(mHostActivity.getString(R.string.msg_no_screen_lock_detected))
+    private fun validate() {
+        if (!::mFingerprintManager.isInitialized) {
+            throw IllegalStateException(mHostActivity.getString(R.string.msg_fm_not_initialized))
         }
         if (!::mDialogFragment.isInitialized) {
             throw IllegalStateException("Dialog view must be initialized before calling authenticate()")
         }
-        if (!fpManager.isHardwareDetected) {
+        if (!deviceHasSecureLock()) {
+            throw IllegalStateException(mHostActivity.getString(R.string.msg_no_screen_lock_detected))
+        }
+        if (!deviceHasFingerprintSensor()) {
             throw IllegalStateException("No fingerprint sensor detected!")
         }
-        if (!fpManager.hasEnrolledFingerprints()) {
+        if (!deviceHasFingerprintsEnrolled()) {
             throw IllegalStateException("No fingerprints enrolled!")
         }
     }
